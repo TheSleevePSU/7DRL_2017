@@ -10,21 +10,30 @@ public class PlayerController : MonoBehaviour {
 	private float journeyLength;
 
 	public float speed = 1.0f;
-	public float minDistance = 0.05f;
+	public float endDistance = 0.05f;
 	
-	// Use this for initialization
-	void Start () {
+	/// <summary>
+    /// Initialize player
+    /// </summary>
+    void Start () {
 		targetPosition = this.transform.position;
 		startPosition = this.transform.position;
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	/// <summary>
+    /// 
+    /// </summary>
+    void Update () {
 		UpdateControl();
 		UpdateMovement();
 	}
 
-	void UpdateControl()
+	/// <summary>
+    /// Gets keyboard input and uses it to set the target position of the player.
+    /// TODO: Make it so that keys are not hard-coded?
+    /// TODO: Make this generic so that it can take input from the keyboard for moving the player or from AI for moving the enemies?
+    /// </summary>
+    void UpdateControl()
 	{
 		if (Input.GetKeyDown(KeyCode.UpArrow)
 		||  Input.GetKeyDown(KeyCode.DownArrow)
@@ -53,12 +62,18 @@ public class PlayerController : MonoBehaviour {
 			}
 
 			journeyLength = Vector3.Distance(targetPosition, startPosition);
+
 		}
 	}
 
-	void UpdateMovement()
+
+	/// <summary>
+    /// Moves the object from its current position towards the targetPosition with a certain speed.
+    /// TODO: Currently this only works for the player but I want to break it out into a separate class so it can work with any generic moving object.
+    /// </summary>
+    void UpdateMovement()
 	{
-		if (Vector3.Distance(startPosition, targetPosition) <= minDistance)
+		if (Vector3.Distance(startPosition, targetPosition) <= endDistance)
 		{
 			transform.position = targetPosition;
 			startPosition = targetPosition;
