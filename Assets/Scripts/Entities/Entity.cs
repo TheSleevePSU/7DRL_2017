@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour, IEntity {
 
-    public int sightRange, attackRange;
+    public int attackRange, health;
 
     // Use this for initialization
     public abstract void Start();
@@ -17,5 +17,13 @@ public abstract class Entity : MonoBehaviour, IEntity {
     public abstract void HandleInstruction(Instruction instruction);
 
     // Process being hit (by something)
-    public abstract void HandleHit(object projectile);
+    public void HandleHit(Weapon weapon)
+    {
+        this.health -= weapon.damage;
+    }
+
+    public void Attack(Weapon weapon, Vector3 destination)
+    {
+
+    }
 }

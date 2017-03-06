@@ -5,23 +5,26 @@ using Assets.Scripts.Entities;
 using UnityEngine;
 
 public class Enemy : Entity {
-    public override void HandleHit(object projectile)
+
+    public int sightRange;
+
+    public Sword sword;
+
+    // Use this for initialization
+    public override void Start()
     {
-        throw new NotImplementedException();
+
+    }
+
+    // Update is called once per frame
+    public override void Update()
+    {
+
     }
 
     public override void HandleInstruction(Instruction instruction)
     {
-        throw new NotImplementedException();
-    }
 
-    public override void Start()
-    {
-        throw new NotImplementedException();
     }
-
-    public override void Update()
-    {
-        throw new NotImplementedException();
-    }
+    
 }
