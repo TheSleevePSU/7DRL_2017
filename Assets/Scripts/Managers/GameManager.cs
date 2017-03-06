@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour {
     public GameState gameState = GameState.GameStart;
     private GameState gameStateBeforeMenuDisplay = GameState.GameStart;
     
+    private List<Enemy> enemiesInScene;
+    private List<Player> playersInScene;
+    private List<Enemy> enemiesExecutingTurn;
+    private List<Player> playersExecutingTurn;
     // This defines a static instance property that attempts to find the manager object in the scene and
     // returns it to the caller.
     public static GameManager instance {
@@ -205,6 +209,7 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStateGameStart()
     {
+        RegisterAllObjectsInScene();
         //TODO Check for game start command
         if (true)
         {
@@ -212,5 +217,46 @@ public class GameManager : MonoBehaviour {
             Debug.Log("GameState.PlayerInput");
             gameStateBeforeMenuDisplay = GameState.PlayerInput;
         }
+    }
+
+    void RegisterAllObjectsInScene()
+    {
+        enemiesInScene = new List<Enemy>();
+        playersInScene = new List<Player>();
+
+        Enemy[] foundEnemies = FindObjectsOfType(typeof(Enemy)) as Enemy[];
+        foreach (Enemy e in foundEnemies)
+        {
+            Enemy enemy = e.GetComponent<Enemy>();
+            if (enemy != null) RegisterEnemy(e);
+        }
+        Player[] foundPlayers = FindObjectsOfType(typeof(Player)) as Player[];
+        foreach (Player p in foundPlayers)
+        {
+            Player player = p.GetComponent<Player>();
+            if (player != null) RegisterPlayer(p);
+        }
+    }
+
+    public void RegisterEnemy(Enemy e)
+    {
+        if (!enemiesInScene.Contains(e)) enemiesInScene.Add(e);
+    }
+
+    public void DeRegisterEnemy(Enemy e)
+    {
+        if (enemiesInScene.Contains(e)) enemiesInScene.Remove(e);
+        if (enemiesExecutingTurn.Contains(e)) enemiesExecutingTurn.Remove(e);
+    }
+
+    public void RegisterPlayer(Player p)
+    {
+        if (!playersInScene.Contains(p)) playersInScene.Add(p);
+    }
+
+    public void DeRegisterPlayer(Player p)
+    {
+        if (playersInScene.Contains(p)) playersInScene.Remove(p);
+        if (playersExecutingTurn.Contains(p)) playersExecutingTurn.Remove(p);
     }
 }
