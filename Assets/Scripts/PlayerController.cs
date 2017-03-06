@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 startPosition;
 	private float startTime;
 	private float journeyLength;
+    private bool isMoving = false;
 
 	public float speed = 1.0f;
 	public float endDistance = 0.05f;
@@ -36,14 +37,6 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void UpdateControl()
 	{
-        /*
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            transform.position = transform.position + new Vector3(0, 1, 0);
-        }
-        */
-
-
 		if (Input.GetKeyDown(KeyCode.UpArrow)
 		||  Input.GetKeyDown(KeyCode.DownArrow)
 		||  Input.GetKeyDown(KeyCode.LeftArrow)
@@ -80,6 +73,11 @@ public class PlayerController : MonoBehaviour {
                     {
                         targetPosition = startPosition;
                     }
+                    else
+                    {
+                        GameManager.instance.SendMessage("OnValidPlayerInputReceived");
+                        isMoving = true;
+                    }
                 }
             }
 
@@ -87,7 +85,6 @@ public class PlayerController : MonoBehaviour {
             targetPosition.y = Mathf.RoundToInt(targetPosition.y);
 
             journeyLength = Vector2.Distance(targetPosition, startPosition);
-            
 		}
 
     }
@@ -99,16 +96,21 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void UpdateMovement()
 	{
-        if (Vector2.Distance(startPosition, targetPosition) <= endDistance)
-		{
-			transform.position = targetPosition;
-			startPosition = targetPosition;
-		}
-		else
-		{
-			float distCovered = (Time.time - startTime) * speed;
-			float fracJourney = distCovered / journeyLength;
-			transform.position = Vector2.Lerp(startPosition, targetPosition, fracJourney);
-		}
+        if (isMoving)
+        {
+            if (Vector2.Distance(transform.position, targetPosition) <= endDistance)
+            {
+                transform.position = targetPosition;
+                startPosition = targetPosition;
+                GameManager.instance.SendMessage("OnPlayerTurnCompleted", this.gameObject.GetComponent<Player>());
+                isMoving = false;
+            }
+            else
+            {
+                float distCovered = (Time.time - startTime) * speed;
+                float fracJourney = distCovered / journeyLength;
+                transform.position = Vector2.Lerp(startPosition, targetPosition, fracJourney);
+            }
+        }
 	}
 }

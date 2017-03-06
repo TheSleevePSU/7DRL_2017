@@ -20,11 +20,13 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public GameState gameState = GameState.GameStart;
     private GameState gameStateBeforeMenuDisplay = GameState.GameStart;
-    
+
     private List<Enemy> enemiesInScene;
     private List<Player> playersInScene;
     private List<Enemy> enemiesExecutingTurn;
     private List<Player> playersExecutingTurn;
+    private bool playerInputReceived = false;
+
     // This defines a static instance property that attempts to find the manager object in the scene and
     // returns it to the caller.
     public static GameManager instance {
@@ -111,12 +113,13 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStatePlayerInput()
     {
-        //TODO Check for valid player input received
-        if (true)
+        if (playerInputReceived)
         {
+            playersExecutingTurn = new List<Player>(playersInScene);
             gameState = GameState.PlayerExecute;
             Debug.Log("GameState.PlayerExecute");
             gameStateBeforeMenuDisplay = GameState.PlayerExecute;
+            playerInputReceived = false;
         }
     }
     /// <summary>
@@ -124,8 +127,7 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStatePlayerExecute()
     {
-        //TODO Check for player's move completed
-        if (true)
+        if (playersExecutingTurn.Count == 0)
         {
             gameState = GameState.AiPlanning;
             Debug.Log("GameState.AiPlanning");
@@ -258,5 +260,19 @@ public class GameManager : MonoBehaviour {
     {
         if (playersInScene.Contains(p)) playersInScene.Remove(p);
         if (playersExecutingTurn.Contains(p)) playersExecutingTurn.Remove(p);
+    }
+
+    public void OnValidPlayerInputReceived()
+    {
+        playerInputReceived = true;
+    }
+
+    public void OnPlayerTurnCompleted(object o)
+    {
+        if (o.GetType() == typeof(Player))
+        {
+            Player p = o as Player;
+            if (playersExecutingTurn.Contains(p)) playersExecutingTurn.Remove(p);
+        }
     }
 }
