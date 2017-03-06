@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour {
     /// Gets keyboard input and uses it to set the target position of the player.
     /// TODO: Make it so that keys are not hard-coded?
     /// TODO: Make this generic so that it can take input from the keyboard for moving the player or from AI for moving the enemies?
+    /// TODO: Move this into the GameManager? Or somewhere else?
     /// </summary>
     void UpdateControl()
 	{
