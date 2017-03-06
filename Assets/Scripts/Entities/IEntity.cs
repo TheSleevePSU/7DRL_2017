@@ -11,11 +11,11 @@ namespace Assets.Scripts.Entities
         Up, Down, Left, Right, Attack, Hit
     }
 
-    interface IEntity
+    public interface IEntity
     {
         void Update();
         void HandleInstruction(Instruction instruction);
         void HandleHit(Weapon weapon);
-        void Attack(Weapon weapon, Vector3 destination);
+        void Attack(Weapon weapon, Vector2 destination);
     }
 }

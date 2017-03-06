@@ -20,7 +20,7 @@ public class Enemy : Entity {
     // Update is called once per frame
     public override void Update()
     {
-        // TODO: Scan (sightRange) for any instances of Players.
+        ScanForPlayers(this.position, this.sightRange);
     }
 
     public override void HandleInstruction(Instruction instruction)
@@ -31,6 +31,11 @@ public class Enemy : Entity {
     public override void HandleHit(Weapon weapon)
     {
         base.HandleHit(weapon);
+    }
+
+    private void ScanForPlayers(Vector2 origin, float range)
+    {
+        // TODO: Scan (sightRange) for any instances of Players.
     }
 
 }

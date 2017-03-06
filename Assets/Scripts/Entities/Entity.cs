@@ -5,7 +5,13 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour, IEntity {
 
-    public Vector3 position;
+    public Vector2 position
+    {
+        get
+        {
+            return this.transform.position;
+        }
+    }
 
     public int attackRange, health;
 
@@ -19,22 +25,36 @@ public abstract class Entity : MonoBehaviour, IEntity {
     public abstract void HandleInstruction(Instruction instruction);
 
     // Process being hit (by something)
-    public void HandleHit(Weapon weapon)
+    public virtual void HandleHit(Weapon weapon)
     {
         this.health -= weapon.damage;
     }
 
-    public void Attack(Weapon weapon, Vector3 destination)
+    public void Attack(Weapon weapon, Vector2 destination)
     {
-        float dx = (this.position.x > destination.x) ? this.position.x - destination.x : destination.x - this.position.x;
-        float dy = (this.position.y > destination.y) ? this.position.y - destination.y : destination.y - this.position.y;
-        // TODO: Write better tangent math
-        if ((dx + dy) > weapon.range)
+        if (!CanWeaponReach(destination, position, weapon))
         {
             return;
         }
 
-        // TODO: Find and interact with any other Entities at `destination`.
-        // If there is an Entity @ desitnation -- call entity.HandleHit(weapon)
+        IEntity entity = GetEntityAt(destination);
+        entity.HandleHit(weapon);
     }
+
+    public static bool CanWeaponReach(Vector2 destination, Vector2 position, Weapon weapon)
+    {
+        return Vector2.Distance(position, destination) > weapon.range;
+    }
+
+    public static IEntity GetEntityAt(Vector2 destination)
+    {
+        Collider2D[] colliders = Physics2D.OverlapPointAll(destination);
+        foreach (Collider2D collider in colliders)
+        {
+            IEntity entity = collider.gameObject.GetComponent<IEntity>();
+            return entity;
+        }
+        return null;
+    }
+
 }
