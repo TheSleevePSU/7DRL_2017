@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	public Vector3 targetPosition;
-	public Vector3 startPosition;
+	private Vector3 targetPosition;
+	private Vector3 startPosition;
 	private float startTime;
 	private float journeyLength;
 
@@ -36,6 +36,14 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void UpdateControl()
 	{
+        /*
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            transform.position = transform.position + new Vector3(0, 1, 0);
+        }
+        */
+
+
 		if (Input.GetKeyDown(KeyCode.UpArrow)
 		||  Input.GetKeyDown(KeyCode.DownArrow)
 		||  Input.GetKeyDown(KeyCode.LeftArrow)
@@ -62,19 +70,36 @@ public class PlayerController : MonoBehaviour {
 				targetPosition = transform.position + new Vector3(1, 0, 0);
 			}
 
-			journeyLength = Vector3.Distance(targetPosition, startPosition);
+            Collider2D[] c2d = Physics2D.OverlapPointAll(targetPosition);
+            foreach (Collider2D c in c2d)
+            {
+                Tile t = c.gameObject.GetComponent<Tile>();
+                if (t != null)
+                {
+                    if (!t.isWalkable)
+                    {
+                        targetPosition = startPosition;
+                    }
+                }
+            }
 
+            targetPosition.x = Mathf.RoundToInt(targetPosition.x);
+            targetPosition.y = Mathf.RoundToInt(targetPosition.y);
+
+            journeyLength = Vector2.Distance(targetPosition, startPosition);
+            
 		}
-	}
+
+    }
 
 
-	/// <summary>
+    /// <summary>
     /// Moves the object from its current position towards the targetPosition with a certain speed.
     /// TODO: Currently this only works for the player but I want to break it out into a separate class so it can work with any generic moving object.
     /// </summary>
     void UpdateMovement()
 	{
-		if (Vector3.Distance(startPosition, targetPosition) <= endDistance)
+        if (Vector2.Distance(startPosition, targetPosition) <= endDistance)
 		{
 			transform.position = targetPosition;
 			startPosition = targetPosition;
@@ -83,7 +108,7 @@ public class PlayerController : MonoBehaviour {
 		{
 			float distCovered = (Time.time - startTime) * speed;
 			float fracJourney = distCovered / journeyLength;
-			transform.position = Vector3.Lerp(startPosition, targetPosition, fracJourney);
+			transform.position = Vector2.Lerp(startPosition, targetPosition, fracJourney);
 		}
 	}
 }
