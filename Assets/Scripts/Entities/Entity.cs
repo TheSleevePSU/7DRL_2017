@@ -38,7 +38,10 @@ public abstract class Entity : MonoBehaviour, IEntity {
         }
 
         IEntity entity = GetEntityAt(destination);
-        entity.HandleHit(weapon);
+        if (entity != null)
+        {
+            entity.HandleHit(weapon);
+        }
     }
 
     public static bool CanWeaponReach(Vector2 destination, Vector2 position, Weapon weapon)
