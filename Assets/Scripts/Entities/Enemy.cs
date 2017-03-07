@@ -60,7 +60,7 @@ public class Enemy : Entity {
         {
             foreach (Player p in visiblePlayers)
             {
-                Debug.Log("Enemy:" + this.gameObject.GetInstanceID().ToString() + " has line of sight to Player:" + p.gameObject.GetInstanceID().ToString());
+                Debug.Log("Enemy " + position.ToString() + " has line of sight to Player " + p.position.ToString());
             }
         }
         return visiblePlayers; // TODO: Figure out how to handle null case, where no players exist in the scene
