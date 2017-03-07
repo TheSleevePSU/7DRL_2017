@@ -25,7 +25,7 @@ public class Enemy : Entity {
 
     public override void HandleInstruction(Instruction instruction)
     {
-
+        base.HandleInstruction(instruction);
     }
 
     public override void HandleHit(Weapon weapon)

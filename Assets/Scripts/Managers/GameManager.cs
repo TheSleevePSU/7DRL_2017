@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Assets.Scripts.Entities;
 
 /* TODO
  * Keep track of all entities in the scene
@@ -106,6 +107,71 @@ public class GameManager : MonoBehaviour {
             default:
                 break;
         }
+    }
+
+
+    public static Instruction GetCurrentInstruction()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            return Instruction.Up;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            return Instruction.Down;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            return Instruction.Right;
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            return Instruction.Left;
+        }
+        return Instruction.Nothing;
+    }
+    
+    public static Vector2 GetTransformForInstruction(Instruction instruction, Vector2 currentLocation)
+    {
+        Vector2 targetPosition = currentLocation;
+
+        switch (instruction)
+        {
+            case Instruction.Up:
+                targetPosition = currentLocation + new Vector2(0, 1);
+                break;
+            case Instruction.Down:
+                targetPosition = currentLocation + new Vector2(0, -1);
+                break;
+            case Instruction.Left:
+                targetPosition = currentLocation + new Vector2(-1, 0);
+                break;
+            case Instruction.Right:
+                targetPosition = currentLocation + new Vector2(1, 0);
+                break;
+        }
+
+        return SnapToGrid(targetPosition, currentLocation);
+    }
+
+    private static Vector2 SnapToGrid(Vector2 destination, Vector2 origin)
+    {
+        Vector2 targetPosition = origin;
+
+        Collider2D[] overlappingColliders = Physics2D.OverlapPointAll(destination);
+        foreach (Collider2D collider in overlappingColliders)
+        {
+            Tile tile = collider.gameObject.GetComponent<Tile>();
+            if (tile != null)
+            {
+                targetPosition = (tile.isWalkable) ? destination : origin;
+            }
+        }
+
+        targetPosition.x = Mathf.RoundToInt(targetPosition.x);
+        targetPosition.y = Mathf.RoundToInt(targetPosition.y);
+
+        return targetPosition;
     }
 
     /// <summary>

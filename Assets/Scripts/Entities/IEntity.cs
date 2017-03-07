@@ -8,7 +8,7 @@ namespace Assets.Scripts.Entities
 {
     public enum Instruction
     {
-        Up, Down, Left, Right, Attack, Hit
+        Up, Down, Left, Right, Nothing, Attack, Hit
     }
 
     public interface IEntity
