@@ -37,56 +37,13 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void UpdateControl()
 	{
-		if (Input.GetKeyDown(KeyCode.UpArrow)
-		||  Input.GetKeyDown(KeyCode.DownArrow)
-		||  Input.GetKeyDown(KeyCode.LeftArrow)
-		||  Input.GetKeyDown(KeyCode.RightArrow)
-		   )
+		if (GameManager.GetCurrentInstruction() != Assets.Scripts.Entities.Instruction.Nothing)
 		{
 			startPosition = transform.position;
 			startTime = Time.time;
 			
-			if (Input.GetKeyDown(KeyCode.UpArrow))
-			{
-				targetPosition = transform.position + new Vector3(0, 1, 0);
-			}
-			if (Input.GetKeyDown(KeyCode.DownArrow))
-			{
-				targetPosition = transform.position + new Vector3(0, -1, 0);
-			}
-			if (Input.GetKeyDown(KeyCode.LeftArrow))
-			{
-				targetPosition = transform.position + new Vector3(-1, 0, 0);
-			}
-			if (Input.GetKeyDown(KeyCode.RightArrow))
-			{
-				targetPosition = transform.position + new Vector3(1, 0, 0);
-			}
-
-            Collider2D[] c2d = Physics2D.OverlapPointAll(targetPosition);
-            foreach (Collider2D c in c2d)
-            {
-                Tile t = c.gameObject.GetComponent<Tile>();
-                if (t != null)
-                {
-                    if (!t.isWalkable)
-                    {
-                        targetPosition = startPosition;
-                    }
-                    else
-                    {
-                        GameManager.instance.SendMessage("OnValidPlayerInputReceived");
-                        isMoving = true;
-                    }
-                }
-            }
-
-            targetPosition.x = Mathf.RoundToInt(targetPosition.x);
-            targetPosition.y = Mathf.RoundToInt(targetPosition.y);
-
             journeyLength = Vector2.Distance(targetPosition, startPosition);
 		}
-
     }
 
 

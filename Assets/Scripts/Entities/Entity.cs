@@ -4,7 +4,7 @@ using Assets.Scripts.Entities;
 using UnityEngine;
 
 public abstract class Entity : MonoBehaviour, IEntity {
-
+    
     public Vector2 position
     {
         get
@@ -12,7 +12,7 @@ public abstract class Entity : MonoBehaviour, IEntity {
             return this.transform.position;
         }
     }
-
+    
     public int attackRange, health;
 
     // Use this for initialization
@@ -22,7 +22,10 @@ public abstract class Entity : MonoBehaviour, IEntity {
     public abstract void Update();
 
     // This is where input is received
-    public abstract void HandleInstruction(Instruction instruction);
+    public virtual void HandleInstruction(Instruction instruction)
+    {
+        this.transform.position = GameManager.GetTransformForInstruction(instruction, transform.position);
+    }
 
     // Process being hit (by something)
     public virtual void HandleHit(Weapon weapon)

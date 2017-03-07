@@ -11,18 +11,19 @@ public class Player : Entity {
     // Use this for initialization
     public override void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     public override void Update()
     {
-
+        Instruction currentInstruction = GameManager.GetCurrentInstruction();
+        HandleInstruction(currentInstruction);
     }
 
     public override void HandleInstruction(Instruction instruction)
     {
-
+        base.HandleInstruction(instruction);
     }
     
 }
