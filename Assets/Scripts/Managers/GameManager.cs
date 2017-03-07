@@ -139,21 +139,23 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStateAiPlanning()
     {
-        //TODO Check for Ai planning completed
-        if (true)
+        foreach (Enemy e in enemiesInScene)
         {
-            gameState = GameState.AiExecute;
-            Debug.Log("GameState.AiExecute");
-            gameStateBeforeMenuDisplay = GameState.AiExecute;
+            e.SendMessage("Plan");
         }
+        //HACK:
+        enemiesExecutingTurn = new List<Enemy>(); //TODO enemiesExecutingTurn = new List<Enemy>(enemiesInScene);
+        gameState = GameState.AiExecute;
+        Debug.Log("GameState.AiExecute");
+        gameStateBeforeMenuDisplay = GameState.AiExecute;
     }
     /// <summary>
     /// The Ai is executing its turn. Iterate through all active Ai objects and call Execute(). Transition to PlayerInput after all active objects complete their actions.
     /// </summary>
     void GameStateAiExecute()
     {
-        //TODO Check for Ai turn executed
-        if (true)
+        //TODO 
+        if (enemiesExecutingTurn.Count == 0)
         {
             gameState = GameState.PlayerInput;
             Debug.Log("GameState.PlayerInput");
