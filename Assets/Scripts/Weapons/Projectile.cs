@@ -9,8 +9,6 @@ namespace Assets.Scripts.Weapons
 {
     class Projectile : Weapon, ITurnTaker
     {
-        private int speed = 2;
-
         private bool inTransit = false;
         private bool isTurnFinished = false;
         private Vector2 trajectory;
@@ -19,8 +17,8 @@ namespace Assets.Scripts.Weapons
 
         public Projectile()
         {
-            this.damage = 1;
-            this.speed = 2;
+            this.stats.SetAttackStrength(1);
+            this.stats.SetSpeed(2);
         }
 
         void Start()
@@ -60,7 +58,7 @@ namespace Assets.Scripts.Weapons
 
         public void HandleMovement(Vector2 destination)
         {
-            Vector2 updatedLocation = Vector2.MoveTowards(transform.position, destination, this.speed * Time.deltaTime);
+            Vector2 updatedLocation = Vector2.MoveTowards(transform.position, destination, this.stats.GetSpeed() * Time.deltaTime);
             transform.position = updatedLocation;
         }
 

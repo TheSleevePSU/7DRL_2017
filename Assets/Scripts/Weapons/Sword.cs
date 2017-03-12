@@ -6,8 +6,6 @@ public class Sword : Weapon
 {
     public Sword()
     {
-        this.range = 1;
-        this.ttl = 1;
-        this.damage = 1;
+        this.stats = new Assets.Scripts.Entities.Stats(-1, 1, 1);
     }
 }

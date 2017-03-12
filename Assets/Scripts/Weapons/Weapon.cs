@@ -5,10 +5,7 @@ using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour {
 
-    public int damage, 
-        range,
-        // "Time To Live" -- how many turns does this apply? I.E. a potion may freeze someone for 3 turns
-        ttl;
+    public Stats stats = new Stats(-1, -1, -1);
 
 	// Use this for initialization
 	void Start () {
@@ -35,7 +32,7 @@ public abstract class Weapon : MonoBehaviour {
 
     public static bool CanWeaponReach(Vector2 destination, Vector2 position, Weapon weapon)
     {
-        return Vector2.Distance(position, destination) > weapon.range;
+        return Vector2.Distance(position, destination) > weapon.stats.GetSightRange();
     }
 
     protected void KillAtLocation(Vector2 destination)
