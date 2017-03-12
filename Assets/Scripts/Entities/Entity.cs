@@ -15,7 +15,20 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
         }
     }
     
-    public int attackRange, health;
+    public int health
+    {
+        get
+        {
+            return this.stats.GetHealth();
+        }
+        set
+        {
+            this.stats.SetHealth(value);
+        }
+    }
+
+    public Stats stats = new Stats(1, 1, 1);
+
     public Weapon weapon;
     public bool isTurnFinished = false;
 
@@ -34,7 +47,6 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     // Process being hit (by something)
     public virtual void HandleHit(Weapon weapon)
     {
-        this.health -= weapon.damage;
     }
 
     public void Attack(Weapon weapon, Vector2 destination)

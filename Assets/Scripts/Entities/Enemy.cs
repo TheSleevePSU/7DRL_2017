@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class Enemy : Entity {
 
-    // Distance -- how far can I see?
-    public int sightRange;
-
     public Sword sword;
 
     public LayerMask sightBlockMask;
@@ -30,7 +27,7 @@ public class Enemy : Entity {
             return;
         }
 
-        ScanForPlayers(this.position, this.sightRange);
+        ScanForPlayers(this.position, this.stats.GetSightRange());
 
         //Debug. TODO: Only call when needed.
         pathToClosestPlayer = PathfindToPlayer(FindClosestPlayer());
