@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Entities;
 using UnityEngine;
+using Assets.Scripts.Weapons;
 
 public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     
@@ -15,6 +16,7 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     }
     
     public int attackRange, health;
+    public Weapon weapon;
     public bool isTurnFinished = false;
 
     // Use this for initialization
@@ -37,21 +39,7 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
 
     public void Attack(Weapon weapon, Vector2 destination)
     {
-        if (!CanWeaponReach(destination, position, weapon))
-        {
-            return;
-        }
-
-        IEntity entity = GetEntityAt(destination);
-        if (entity != null)
-        {
-            entity.HandleHit(weapon);
-        }
-    }
-
-    public static bool CanWeaponReach(Vector2 destination, Vector2 position, Weapon weapon)
-    {
-        return Vector2.Distance(position, destination) > weapon.range;
+        weapon.Attack(destination);
     }
 
     public static IEntity GetEntityAt(Vector2 destination)

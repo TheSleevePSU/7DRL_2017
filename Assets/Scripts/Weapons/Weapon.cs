@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.Entities;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour {
+public abstract class Weapon : MonoBehaviour {
 
     public int damage, 
-        range, 
+        range,
         // "Time To Live" -- how many turns does this apply? I.E. a potion may freeze someone for 3 turns
         ttl;
 
@@ -18,4 +19,37 @@ public class Weapon : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public virtual void Attack(Vector2 destination)
+    {
+        KillAtLocation(destination);
+    }
+
+    public Vector2 position
+    {
+        get
+        {
+            return this.transform.position;
+        }
+    }
+
+    public static bool CanWeaponReach(Vector2 destination, Vector2 position, Weapon weapon)
+    {
+        return Vector2.Distance(position, destination) > weapon.range;
+    }
+
+    protected void KillAtLocation(Vector2 destination)
+    {
+        if (!CanWeaponReach(destination, position, this))
+        {
+            return;
+        }
+
+        // This means Enemies can be hit with friendly fire.
+        IEntity victim = Entity.GetEntityAt(destination);
+        if (victim != null)
+        {
+            victim.HandleHit(this);
+        }
+    }
 }
