@@ -142,16 +142,16 @@ public class GameManager : MonoBehaviour {
         switch (instruction)
         {
             case Instruction.Up:
-                targetPosition += new Vector2(0, 1);
+                targetPosition += Vector2.up;
                 break;
             case Instruction.Down:
-                targetPosition += new Vector2(0, -1);
+                targetPosition += Vector2.down;
                 break;
             case Instruction.Left:
-                targetPosition += new Vector2(-1, 0);
+                targetPosition += Vector2.left;
                 break;
             case Instruction.Right:
-                targetPosition += new Vector2(1, 0);
+                targetPosition += Vector2.right;
                 break;
         }
 
