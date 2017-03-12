@@ -41,6 +41,10 @@ namespace Assets.Scripts.Weapons
             {
                 HandleMovement(destination);
             }
+            else
+            {
+                this.isTurnFinished = true;
+            }
         }
         
         public void OnTriggerEnter2D(Collider2D collider)
@@ -60,9 +64,9 @@ namespace Assets.Scripts.Weapons
             transform.position = updatedLocation;
         }
 
-        private bool IsMyTurn()
+        public bool IsMyTurn()
         {
-            return GameManager.instance.gameState == GameManager.GameState.AiExecute;
+            return GameManager.instance.gameState == GameManager.GameState.ProjectileExecuteAfterAi || GameManager.instance.gameState == GameManager.GameState.ProjectileExecuteAfterPlayer;
         }
 
         public bool IsTurnFinished()

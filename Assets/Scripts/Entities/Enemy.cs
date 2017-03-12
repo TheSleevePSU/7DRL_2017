@@ -25,6 +25,11 @@ public class Enemy : Entity {
     // Update is called once per frame
     public override void Update()
     {
+        if (!IsMyTurn())
+        {
+            return;
+        }
+
         ScanForPlayers(this.position, this.sightRange);
 
         //Debug. TODO: Only call when needed.
@@ -89,5 +94,10 @@ public class Enemy : Entity {
     {
         Grid.instance.pathfinding.FindPath(transform.position, player.transform.position);
         return Grid.instance.path;
+    }
+
+    public override bool IsMyTurn()
+    {
+        return GameManager.instance.gameState == GameManager.GameState.AiExecute || GameManager.instance.gameState == GameManager.GameState.AiPlanning;
     }
 }

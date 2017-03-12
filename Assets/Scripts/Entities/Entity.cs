@@ -57,4 +57,6 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     {
         return isTurnFinished;
     }
+
+    public abstract bool IsMyTurn();
 }

@@ -17,7 +17,11 @@ public class Player : Entity {
     // Update is called once per frame
     public override void Update()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.PlayerInput) return;
+        if (!IsMyTurn())
+        {
+            return;
+        }
+
         Instruction currentInstruction = GameManager.GetCurrentInstruction();
         HandleInstruction(currentInstruction);
     }
@@ -27,5 +31,10 @@ public class Player : Entity {
         isTurnFinished = instruction != Instruction.Nothing;
         base.HandleInstruction(instruction);
     }
-    
+
+    public override bool IsMyTurn()
+    {
+        return GameManager.instance.gameState == GameManager.GameState.PlayerExecute;
+    }
+
 }
