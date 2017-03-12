@@ -17,12 +17,14 @@ public class Player : Entity {
     // Update is called once per frame
     public override void Update()
     {
+        if (GameManager.instance.gameState != GameManager.GameState.PlayerInput) return;
         Instruction currentInstruction = GameManager.GetCurrentInstruction();
         HandleInstruction(currentInstruction);
     }
 
     public override void HandleInstruction(Instruction instruction)
     {
+        isTurnFinished = instruction != Instruction.Nothing;
         base.HandleInstruction(instruction);
     }
     

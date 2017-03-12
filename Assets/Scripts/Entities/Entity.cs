@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Entities;
 using UnityEngine;
 
-public abstract class Entity : MonoBehaviour, IEntity {
+public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     
     public Vector2 position
     {
@@ -14,6 +15,7 @@ public abstract class Entity : MonoBehaviour, IEntity {
     }
     
     public int attackRange, health;
+    public bool isTurnFinished = false;
 
     // Use this for initialization
     public abstract void Start();
@@ -63,4 +65,8 @@ public abstract class Entity : MonoBehaviour, IEntity {
         return null;
     }
 
+    public bool IsTurnFinished()
+    {
+        return isTurnFinished;
+    }
 }

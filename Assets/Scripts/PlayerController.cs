@@ -37,13 +37,13 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void UpdateControl()
 	{
-		if (GameManager.GetCurrentInstruction() != Assets.Scripts.Entities.Instruction.Nothing)
-		{
-			startPosition = transform.position;
-			startTime = Time.time;
-			
-            journeyLength = Vector2.Distance(targetPosition, startPosition);
-		}
+		//if (GameManager.GetCurrentInstruction() != Assets.Scripts.Entities.Instruction.Nothing)
+		//{
+		//	startPosition = transform.position;
+		//	startTime = Time.time;
+		//	
+        //    journeyLength = Vector2.Distance(targetPosition, startPosition);
+		//}
     }
 
 

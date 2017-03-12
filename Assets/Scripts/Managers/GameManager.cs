@@ -15,18 +15,14 @@ using Assets.Scripts.Entities;
 public class GameManager : MonoBehaviour {
     // s_Instance is used to cache the instance found in the scene so we don't have to look it up every time.
     private static GameManager s_Instance = null;
-    public enum GameState { PlayerInput, PlayerExecute, AiPlanning, AiExecute, InGameMenu, LevelOver, GameOverWin, GameOverLose, GameStart }
+    public enum GameState { PlayerInput, PlayerExecute, ProjectileExecuteAfterPlayer, AiPlanning, AiExecute, ProjectileExecuteAfterAi, InGameMenu, LevelOver, GameOverWin, GameOverLose, GameStart }
     /// <summary>
     /// Current state of the game used by the GameManager's state machine
     /// </summary>
     public GameState gameState = GameState.GameStart;
     private GameState gameStateBeforeMenuDisplay = GameState.GameStart;
 
-    private List<Enemy> enemiesInScene;
-    private List<Player> playersInScene;
-    private List<Enemy> enemiesExecutingTurn;
-    private List<Player> playersExecutingTurn;
-    private bool playerInputReceived = false;
+    private List<ITurnTaker> turnTakers = new List<ITurnTaker>();
 
     // This defines a static instance property that attempts to find the manager object in the scene and
     // returns it to the caller.
@@ -61,6 +57,8 @@ public class GameManager : MonoBehaviour {
     
     void Update()
     {
+        turnTakers = UpdateTurnTakerList();
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (gameState == GameState.InGameMenu)
@@ -83,11 +81,17 @@ public class GameManager : MonoBehaviour {
             case GameState.PlayerExecute:
                 GameStatePlayerExecute();
                 break;
+            case GameState.ProjectileExecuteAfterPlayer:
+                GameStateProjectileExecuteAfterPlayer();
+                break;
             case GameState.AiPlanning:
                 GameStateAiPlanning();
                 break;
             case GameState.AiExecute:
                 GameStateAiExecute();
+                break;
+            case GameState.ProjectileExecuteAfterAi:
+                GameStateProjectileExecuteAfterAi();
                 break;
             case GameState.InGameMenu:
                 GameStateInGameMenu();
@@ -174,18 +178,36 @@ public class GameManager : MonoBehaviour {
         return targetPosition;
     }
 
+    private void TransitionToGameState<T>(GameState nextGameState) where T : UnityEngine.Object
+    {
+        ITurnTaker[] thingsTakingTurns = FindObjectsOfType<T>() as ITurnTaker[];
+        turnTakers = new List<ITurnTaker>(thingsTakingTurns);
+        gameState = nextGameState;
+        Debug.Log("GameState." + nextGameState.ToString());
+        gameStateBeforeMenuDisplay = nextGameState;
+    }
+
+    private List<ITurnTaker> UpdateTurnTakerList()
+    {
+        List<ITurnTaker> cleanedList = new List<ITurnTaker>();
+        foreach (ITurnTaker tt in turnTakers)
+        {
+            if (!tt.IsTurnFinished())
+            {
+                cleanedList.Add(tt);
+            }
+        }
+        return cleanedList;
+    } 
+
     /// <summary>
     /// Wait for player to input a command. If a valid input was received transition to PlayerExecute state.
     /// </summary>
     void GameStatePlayerInput()
     {
-        if (playerInputReceived)
+        if (turnTakers.Count == 0)
         {
-            playersExecutingTurn = new List<Player>(playersInScene);
-            gameState = GameState.PlayerExecute;
-            Debug.Log("GameState.PlayerExecute");
-            gameStateBeforeMenuDisplay = GameState.PlayerExecute;
-            playerInputReceived = false;
+            TransitionToGameState<Player>(GameState.PlayerExecute);
         }
     }
     /// <summary>
@@ -193,11 +215,16 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStatePlayerExecute()
     {
-        if (playersExecutingTurn.Count == 0)
+        if (turnTakers.Count == 0)
         {
-            gameState = GameState.AiPlanning;
-            Debug.Log("GameState.AiPlanning");
-            gameStateBeforeMenuDisplay = GameState.AiPlanning;
+            TransitionToGameState<Assets.Scripts.Weapons.Projectile>(GameState.ProjectileExecuteAfterPlayer);
+        }
+    }
+    void GameStateProjectileExecuteAfterPlayer()
+    {
+        if (turnTakers.Count == 0)
+        {
+            TransitionToGameState<Enemy>(GameState.AiPlanning);
         }
     }
     /// <summary>
@@ -205,27 +232,26 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStateAiPlanning()
     {
-        foreach (Enemy e in enemiesInScene)
+        if (turnTakers.Count == 0)
         {
-            e.SendMessage("Plan");
+            TransitionToGameState<Enemy>(GameState.AiExecute);
         }
-        //HACK:
-        enemiesExecutingTurn = new List<Enemy>(); //TODO enemiesExecutingTurn = new List<Enemy>(enemiesInScene);
-        gameState = GameState.AiExecute;
-        Debug.Log("GameState.AiExecute");
-        gameStateBeforeMenuDisplay = GameState.AiExecute;
     }
     /// <summary>
     /// The Ai is executing its turn. Iterate through all active Ai objects and call Execute(). Transition to PlayerInput after all active objects complete their actions.
     /// </summary>
     void GameStateAiExecute()
     {
-        //TODO 
-        if (enemiesExecutingTurn.Count == 0)
+        if (turnTakers.Count == 0)
         {
-            gameState = GameState.PlayerInput;
-            Debug.Log("GameState.PlayerInput");
-            gameStateBeforeMenuDisplay = GameState.PlayerInput;
+            TransitionToGameState<Assets.Scripts.Weapons.Projectile>(GameState.ProjectileExecuteAfterAi);
+        }
+    }
+    void GameStateProjectileExecuteAfterAi()
+    {
+        if (turnTakers.Count == 0)
+        {
+            TransitionToGameState<Player>(GameState.PlayerInput);
         }
     }
     /// <summary>
@@ -279,68 +305,10 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void GameStateGameStart()
     {
-        RegisterAllObjectsInScene();
         //TODO Check for game start command
         if (true)
         {
-            gameState = GameState.PlayerInput;
-            Debug.Log("GameState.PlayerInput");
-            gameStateBeforeMenuDisplay = GameState.PlayerInput;
-        }
-    }
-
-    void RegisterAllObjectsInScene()
-    {
-        enemiesInScene = new List<Enemy>();
-        playersInScene = new List<Player>();
-
-        Enemy[] foundEnemies = FindObjectsOfType(typeof(Enemy)) as Enemy[];
-        foreach (Enemy e in foundEnemies)
-        {
-            Enemy enemy = e.GetComponent<Enemy>();
-            if (enemy != null) RegisterEnemy(e);
-        }
-        Player[] foundPlayers = FindObjectsOfType(typeof(Player)) as Player[];
-        foreach (Player p in foundPlayers)
-        {
-            Player player = p.GetComponent<Player>();
-            if (player != null) RegisterPlayer(p);
-        }
-    }
-
-    public void RegisterEnemy(Enemy e)
-    {
-        if (!enemiesInScene.Contains(e)) enemiesInScene.Add(e);
-    }
-
-    public void DeRegisterEnemy(Enemy e)
-    {
-        if (enemiesInScene.Contains(e)) enemiesInScene.Remove(e);
-        if (enemiesExecutingTurn.Contains(e)) enemiesExecutingTurn.Remove(e);
-    }
-
-    public void RegisterPlayer(Player p)
-    {
-        if (!playersInScene.Contains(p)) playersInScene.Add(p);
-    }
-
-    public void DeRegisterPlayer(Player p)
-    {
-        if (playersInScene.Contains(p)) playersInScene.Remove(p);
-        if (playersExecutingTurn.Contains(p)) playersExecutingTurn.Remove(p);
-    }
-
-    public void OnValidPlayerInputReceived()
-    {
-        playerInputReceived = true;
-    }
-
-    public void OnPlayerTurnCompleted(object o)
-    {
-        if (o.GetType() == typeof(Player))
-        {
-            Player p = o as Player;
-            if (playersExecutingTurn.Contains(p)) playersExecutingTurn.Remove(p);
+            TransitionToGameState<Player>(GameState.PlayerInput);
         }
     }
 }
