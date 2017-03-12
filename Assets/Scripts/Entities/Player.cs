@@ -21,9 +21,11 @@ public class Player : Entity {
         {
             return;
         }
-
-        Instruction currentInstruction = GameManager.GetCurrentInstruction();
-        HandleInstruction(currentInstruction);
+        if (GameManager.instance.gameState == GameManager.GameState.PlayerInput)
+        {
+            Instruction currentInstruction = GameManager.GetCurrentInstruction();
+            HandleInstruction(currentInstruction);
+        }
     }
 
     public override void HandleInstruction(Instruction instruction)
@@ -34,7 +36,7 @@ public class Player : Entity {
 
     public override bool IsMyTurn()
     {
-        return GameManager.instance.gameState == GameManager.GameState.PlayerExecute;
+        return GameManager.instance.gameState == GameManager.GameState.PlayerExecute || GameManager.instance.gameState == GameManager.GameState.PlayerInput;
     }
 
 }
