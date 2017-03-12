@@ -5,7 +5,7 @@ using UnityEngine;
 public class Weapon : MonoBehaviour {
 
     public int damage, 
-        range, 
+        range,
         // "Time To Live" -- how many turns does this apply? I.E. a potion may freeze someone for 3 turns
         ttl;
 
@@ -18,4 +18,12 @@ public class Weapon : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public Vector2 position
+    {
+        get
+        {
+            return this.transform.position;
+        }
+    }
 }
