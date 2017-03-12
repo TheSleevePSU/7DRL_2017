@@ -11,7 +11,7 @@ namespace Assets.Scripts.Entities
         Up, Down, Left, Right, Nothing, Attack, Hit
     }
 
-    public interface IEntity
+    public interface IEntity : IHittable
     {
         void Update();
         void HandleInstruction(Instruction instruction);
