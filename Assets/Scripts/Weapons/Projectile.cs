@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Weapons
 {
-    class Projectile : Weapon
+    public class Projectile : Weapon
     {
         private int speed = 2;
 
@@ -29,6 +29,11 @@ namespace Assets.Scripts.Weapons
         // Update is called once per frame
         void Update()
         {
+            if (!IsMyTurn())
+            {
+                return;
+            }
+
             this.inTransit = this.position != this.destination;
             if (this.inTransit)
             {
@@ -41,7 +46,7 @@ namespace Assets.Scripts.Weapons
             KillAtLocation(collider.transform.position);
         }
 
-        public void Attack(Vector2 destination)
+        public override void Attack(Vector2 destination)
         {
             this.destination = destination;
             this.inTransit = true;
@@ -53,15 +58,9 @@ namespace Assets.Scripts.Weapons
             transform.position = updatedLocation;
         }
 
-        private void KillAtLocation(Vector2 destination)
+        private bool IsMyTurn()
         {
-            // This means Enemies can be hit with friendly fire.
-            IEntity victim = Entity.GetEntityAt(destination);
-            if (victim != null)
-            {
-                victim.HandleHit(this);
-                this.inTransit = false;
-            }
+            return GameManager.instance.gameState == GameManager.GameState.AiExecute;
         }
     }
 }

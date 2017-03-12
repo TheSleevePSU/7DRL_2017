@@ -15,7 +15,6 @@ namespace Assets.Scripts.Entities
     {
         void Update();
         void HandleInstruction(Instruction instruction);
-        void HandleHit(Weapon weapon);
         void Attack(Weapon weapon, Vector2 destination);
     }
 }
