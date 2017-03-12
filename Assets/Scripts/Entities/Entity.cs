@@ -47,6 +47,12 @@ public abstract class Entity : MonoBehaviour, IEntity, ITurnTaker {
     // Process being hit (by something)
     public virtual void HandleHit(Weapon weapon)
     {
+        foreach (StatKey key in weapon.stats.Keys)
+        {
+            this.stats[key] -= weapon.stats[key];
+        }
+
+//        this.stats.SetHealth(this.stats.GetHealth() - (weapon.stats.GetHealth() * weapon.stats.GetAttackStrength()));
     }
 
     public void Attack(Weapon weapon, Vector2 destination)
